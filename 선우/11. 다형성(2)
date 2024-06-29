@@ -1,0 +1,101 @@
+## 11. 다형성2
+다형성 활용
+코드의 중복 제거 시도 Dog, Cat, Caw의 타입이 서로 다르기 때문에 불가능하다.
+문제의 핵심은 타입이 다르다는 점이다.
+
+다형적 참조와 메서드 오버라이딩을 통해 Dog, Cat, Caw가 모두 같은 타입을 사용하고, 자신의 메서드도 호출할 수 있다.
+
+![](https://velog.velcdn.com/images/swsvelog/post/0eb2b671-6a2b-4ddc-92b5-a7ff30a45138/image.png)
+
+
+### 1. 오버라이딩
+Animal(동물) 이라는 부모 클래스를 만들고 sound() 메서드를 정의한다.
+
+```java
+public class AnimalPolyMain {
+    public static void main(String[] args) {
+        Animal dog = new Dog();
+        Animal cat = new Cat();
+        Animal caw = new Caw();
+        soundAnimal(dog);
+        soundAnimal(cat);
+        soundAnimal(caw);
+    }
+
+    private static void soundAnimal(Animal animal){
+        System.out.println("동물 소리 테스트 시작 ");
+        animal.sound();
+        System.out.println("동물 소리 테스트 종료");
+    }
+
+}
+```
+
+자식 클래스에서 오버라이딩 할 목적으로 만들어졌다.
+Dog, Cat, Caw는 Animal 클래스를 상속받았다. 각각 부모의 sound()메서드를 오버라이딩 한다.
+
+soundAnimal(dog)을 호출하면
+soundAnimal(Animal animal)에 Dog 인스턴스가 전달된다.
+Animal animal = dog로 이해하면 된다 부모는 자식을 담을 수 있기 때문에 사용 가능 animal.sound() 메서드를 호출한다.
+
+![](https://velog.velcdn.com/images/swsvelog/post/2261f969-0d60-4820-90c9-e4279d702282/image.png)
+
+animal 변수 타입은 Animal 이므로 Dog 인스턴스에 있는 Animal 클래스 부분을 찾아서 sound()메서드를 실행한다.
+하위클래스 Dog에서 sound()를 오버라이딩 했기 때문에 (우선권) 호출이 된다.
+
+다양한 모습을 가지기 때문에 다형적 참조이다.
+
+### 2. 배열과 for문을 사용하여 중복 제거
+```java
+public static void main(String[] args) {
+        Dog dog = new Dog();
+        Cat cat = new Cat();
+        Caw caw = new Caw();
+        Duck duck = new Duck();
+        Animal[] animalArr = {dog, cat, caw, duck};
+
+
+        // 변하지 않는 부분
+        for (Animal animal : animalArr) {
+            System.out.println("동물 소리 테스트 시작");
+            animal.sound();
+            System.out.println("동물 소리 테스트 종료");
+        }
+    }
+```
+
+- 둘은 같은 코드이다.
+Animal[] animalArr = new Animal[]{dog, cat, caw};
+Animal[] animalArr = {dog, cat, caw}
+다형적 참조 덕분에 Dog, Cat, Caw의 부모 타입인 Animal 타입으로 배열을 만들고, 각각을 배열에 포함한다.
+
+animal.sound()를 호출하지만 배열에는 Dog, Cat, Caw의 인스턴스가 들어있다. 메서드 오버라이딩에 의해 각 인스턴스의 오버라이딩 된 sound() 메서드가 호출된다.
+
+인라인 베리어블 단축키 : ctrl + alt + N을 누르면 된다.
+Extract Method 단축키 : ctrl + alt + M
+
+새로운 동물이 추가되어도 soundAnimal() 메서드는 코드 변경 없이 유지할 수 있다. Animal이라는 추상적인 부모를 참조하기 때문이다. Animal을 상속 받은 새로운 동물이 추가되어도 메서드의 코드는 변경 없이 유지할 수 있다.
+
+- 코드 줄이기
+```java
+ public static void main(String[] args) {
+        Animal[] animalArr = {new Dog(), new Cat(), new Caw(), new Duck()};
+        for (Animal animal : animalArr) {
+            soundAnimal(animal);
+        }
+    }
+
+    // 변하지 않는 부분
+    private static void soundAnimal(Animal animal) {
+        System.out.println("동물 소리 테스트 시작");
+        animal.sound();
+        System.out.println("동물 소리 테스트 종료");
+    }
+```
+
+- 남은 문제
+Animal 클래스 생성할 수 있는 문제
+Animal 클래스를 상속받는 곳에서 sound()메서드 오버라이딩을 하지 않을 가능성 -> 개발자가 잊어버릴 가능성
+문제 없이 호출이 된다. 부모 클래스에 있는 Animal.sound()
+
+---
